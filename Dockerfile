@@ -3,7 +3,7 @@ FROM python:3.10.0-alpine as compiler
 WORKDIR /srv
 
 COPY setup.py ./
-COPY README.md ./
+COPY README ./
 COPY bot_scraper ./bot_scaper
 
 RUN python3 setup.py sdist bdist_wheel

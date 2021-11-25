@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 __version__ = "0.0"
 exec(open("./bot_scraper/version.py").read())
 
-with open("README.md") as f:
+with open("README") as f:
     _LONG_DESCRIPTION = f.read()
 
 setup(
