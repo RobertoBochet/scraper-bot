@@ -1,0 +1,6 @@
+exclude_dirs:
+ - .git
+ - .venv
+ - build
+ - dist
+ - setup.py
