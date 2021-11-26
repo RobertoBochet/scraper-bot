@@ -24,6 +24,7 @@ setup(
         "beautifulsoup4 ~= 4.10.0",
         "redis ~= 4.0.2",
         "requests ~= 2.26.0",
+        "ischedule ~= 1.2.2",
     ],
     extras_require={"dev": ["pre-commit ~= 2.15.0"]},
     classifiers=[
