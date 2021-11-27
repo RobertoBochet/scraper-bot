@@ -4,7 +4,7 @@ WORKDIR /srv
 
 COPY setup.py ./
 COPY README ./
-COPY bot_scraper ./bot_scaper
+COPY bot_scraper ./bot_scraper
 
 RUN python3 setup.py sdist bdist_wheel
 

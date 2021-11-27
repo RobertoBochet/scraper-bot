@@ -2,20 +2,22 @@
 import argparse
 import logging
 import logging.config
+import signal
 import sys
 from pathlib import Path
 
 import yaml
 
-from . import __version__
-from .bot_scraper import BotScraper
+from . import BotScraper, __version__
 from .exceptions import ConfigError
 
-_LOGGER_CONFIG_PATH = (Path(__file__).parent / ".." / "logger.yaml").resolve()
+_LOGGER_CONFIG_PATH = (Path(__file__).parent / "logger.yaml").resolve()
 _LOGGER = logging.getLogger(__package__)
 
 
 def main() -> int:
+    signal.signal(signal.SIGINT, lambda: sys.exit(3))
+
     # loads logger config
     try:
         with open(_LOGGER_CONFIG_PATH) as f:

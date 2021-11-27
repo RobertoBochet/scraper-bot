@@ -1,14 +1,18 @@
 import yaml
 from ischedule import run_loop
 
+from ..cache import Cache
 from .task import Task
 
 
 class BotScraper:
     tasks: list[Task]
+    cache: Cache
 
     def __init__(self, bot: dict, tasks: list):
         self.tasks = [Task.make(c) for c in tasks]
+
+        self.cache = Cache()
 
     def _setup_tasks(self):
         for t in self.tasks:
@@ -18,6 +22,9 @@ class BotScraper:
         self._setup_tasks()
 
         run_loop()
+
+    def _on_find(self):
+        pass
 
     @classmethod
     def make(cls, config: dict):

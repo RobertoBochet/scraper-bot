@@ -1,7 +1,9 @@
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
 __version__ = "0.0"
-exec(open("./bot_scraper/version.py").read())
+exec(open(Path(__file__).parent / "bot_scraper/version.py").read())
 
 with open("README") as f:
     _LONG_DESCRIPTION = f.read()
@@ -11,7 +13,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     license="gpl-3.0",
-    description="A telegram bot to stay tunded on real estate ads",
+    description="A telegram bot to stay tuned on real estate ads",
     long_description=_LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     author="Roberto Bochet",
@@ -25,8 +27,10 @@ setup(
         "redis ~= 4.0.2",
         "requests ~= 2.26.0",
         "ischedule ~= 1.2.2",
+        "PyYAML ~= 6.0",
     ],
     extras_require={"dev": ["pre-commit ~= 2.15.0"]},
+    package_data={"bot_scraper": ["logger.yaml"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Operating System :: OS Independent",
