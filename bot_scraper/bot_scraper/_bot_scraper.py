@@ -2,7 +2,7 @@ import yaml
 from ischedule import run_loop
 
 from ..cache import Cache
-from .task import Task
+from ._task import Task
 
 
 class BotScraper:
