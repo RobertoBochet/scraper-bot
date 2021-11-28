@@ -2,9 +2,7 @@ FROM python:3.10.0-alpine as compiler
 
 WORKDIR /srv
 
-COPY setup.py ./
-COPY README ./
-COPY scraper_bot ./scraper_bot
+COPY . .
 
 RUN python3 setup.py sdist bdist_wheel
 

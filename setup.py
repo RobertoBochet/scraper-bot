@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 __version__ = "0.0"
 exec(open(Path(__file__).parent / "scraper_bot/_version.py").read())
 
-with open("README") as f:
+with open("README.md") as f:
     _LONG_DESCRIPTION = f.read()
 
 setup(
