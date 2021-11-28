@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from typing import Callable
 
@@ -26,11 +28,11 @@ class Task(Scraper):
 
         _LOGGER.info(f"Created task {self.name}")
 
-    def schedule(self):
+    def schedule(self) -> None:
         schedule(self.run, interval=self.interval)
 
         _LOGGER.info(f"Scheduled task {self.name}")
 
     @classmethod
-    def make(cls, config: dict):
+    def make(cls, config: dict) -> Task:
         return cls(**config)
