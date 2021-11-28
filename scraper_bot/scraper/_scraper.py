@@ -21,6 +21,7 @@ class Scraper:
         _LOGGER.info(f"Start scraping {self.url}")
 
         entities = []
+        last_page_entities = []
 
         i = 0
         while True:
@@ -41,16 +42,35 @@ class Scraper:
             if len(page_entities) == 0:
                 break
 
+            page_entities = [e["href"] for e in page_entities]
+
+            # some site given a pagination greater than
+            # the last page return the last page
+            # if all links are identical between
+            # two consequential pages then break
+            # this is a WA to handle this situation
+            if (
+                len(page_entities) == len(last_page_entities)
+                and len(
+                    [
+                        1
+                        for i, j in zip(page_entities, last_page_entities)
+                        if i != j
+                    ]
+                )
+                == 0
+            ):
+                break
+
             _LOGGER.info(
                 f"Found {len(page_entities)} entries in the current page"
             )
 
             entities += page_entities
+            last_page_entities = page_entities
 
         _LOGGER.info(f"Found {len(entities)} entries")
 
-        links = [e["href"] for e in entities]
-
-        self.on_find(*links)
+        self.on_find(*entities)
 
         _LOGGER.info(f"Scraping {self.url} completed")
