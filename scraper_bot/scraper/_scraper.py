@@ -38,6 +38,8 @@ class Scraper:
 
             links = [e["href"] for e in elements]
 
+            _LOGGER.info(f"Found {len(links)} entries")
+
             self.on_find(*links)
 
         _LOGGER.info(f"Scraping {self.url} completed")
