@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 
 import yaml
@@ -8,6 +9,8 @@ from ischedule import run_loop
 from ..bot import Bot
 from ..cache import Cache
 from ._task import Task
+
+_LOGGER = logging.getLogger(__package__)
 
 
 class ScraperBot:
@@ -28,13 +31,19 @@ class ScraperBot:
         for t in self.tasks:
             t.schedule()
 
+        _LOGGER.info("Setup schedule")
+
     def start(self) -> None:
         self._setup_tasks()
+
+        _LOGGER.info("Start schedule")
 
         run_loop()
 
     def _on_find(self, *entries: str) -> None:
-        new_entries = filter(lambda e: not self.cache.exists(e), entries)
+        new_entries = list(filter(lambda e: not self.cache.exists(e), entries))
+
+        _LOGGER.info(f"Found {len(new_entries)} new entries")
 
         for n in new_entries:
             self.bot.send_found(n)
