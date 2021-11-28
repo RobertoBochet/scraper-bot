@@ -3,13 +3,13 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 __version__ = "0.0"
-exec(open(Path(__file__).parent / "bot_scraper/version.py").read())
+exec(open(Path(__file__).parent / "scraper_bot/_version.py").read())
 
 with open("README") as f:
     _LONG_DESCRIPTION = f.read()
 
 setup(
-    name="bot-scraper",
+    name="scraper-bot",
     packages=find_packages(),
     version=__version__,
     license="gpl-3.0",
@@ -18,7 +18,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Roberto Bochet",
     author_email="robertobochet@gmail.com",
-    url="https://github.com/RobertoBochet/bot-scraper",
+    url="https://github.com/RobertoBochet/scraper-bot",
     license_files=("LICENSE",),
     keywords=["bot", "telegrambot", "scraper", "telegram"],
     install_requires=[
@@ -30,7 +30,7 @@ setup(
         "PyYAML ~= 6.0",
     ],
     extras_require={"dev": ["pre-commit ~= 2.15.0"]},
-    package_data={"bot_scraper": ["logger.yaml"]},
+    package_data={"scraper_bot": ["logger.yaml"]},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Operating System :: OS Independent",

@@ -7,12 +7,12 @@ from ..cache import Cache
 from ._task import Task
 
 
-class BotScraper:
+class ScraperBot:
     tasks: list[Task]
     cache: Cache
 
     def __init__(self, bot: dict, tasks: list):
-        self.tasks = [Task.make(c) for c in tasks]
+        self.tasks = [Task.make(c, on_find=self._on_find) for c in tasks]
 
         self.cache = Cache()
 
@@ -29,10 +29,10 @@ class BotScraper:
         pass
 
     @classmethod
-    def make(cls, config: dict) -> BotScraper:
+    def make(cls, config: dict) -> ScraperBot:
         return cls(**config)
 
     @classmethod
-    def make_from_config(cls, config_file: str) -> BotScraper:
+    def make_from_config(cls, config_file: str) -> ScraperBot:
         with open(config_file) as f:
             return cls.make(yaml.safe_load(f))

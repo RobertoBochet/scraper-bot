@@ -1,15 +1,15 @@
 version: "3"
 
 services:
-  bot-scraper:
-    image: robertobochet/bot-scraper
+  scraper-bot:
+    image: robertobochet/scraper-bot
     restart: unless-stopped
     environment:
       - BS_BOT_REDIS=redis://redis/0
     depends_on:
       - redis
     volumes:
-      - "./config.yaml:/etc/bot-scraper/config.yaml"
+      - "./config.yaml:/etc/scraperbot/config.yaml"
 
   redis:
     image: redis:6.2.6-alpine

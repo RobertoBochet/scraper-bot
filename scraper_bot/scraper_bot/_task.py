@@ -18,6 +18,7 @@ class Task(Scraper):
         self,
         url: str,
         target: str,
+        *,
         on_find: Callable[[...], None],
         interval: int = 60 * 60,
         name: str = "generic-task",
@@ -34,5 +35,5 @@ class Task(Scraper):
         _LOGGER.info(f"Scheduled task {self.name}")
 
     @classmethod
-    def make(cls, config: dict) -> Task:
-        return cls(**config)
+    def make(cls, config: dict, **kwargs) -> Task:
+        return cls(**config, **kwargs)

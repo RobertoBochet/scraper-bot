@@ -4,7 +4,7 @@ WORKDIR /srv
 
 COPY setup.py ./
 COPY README ./
-COPY bot_scraper ./bot_scraper
+COPY scraper_bot ./scraper_bot
 
 RUN python3 setup.py sdist bdist_wheel
 
@@ -16,4 +16,4 @@ COPY --from=compiler /srv/dist/*.whl /
 
 RUN pip3 install *.whl
 
-ENTRYPOINT python3 -m bot_scraper
+ENTRYPOINT python3 -m scraper_bot

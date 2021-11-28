@@ -18,5 +18,5 @@ handlers:
 loggers:
   root:
     level: INFO
-  bot_scraper:
+  scraper_bot:
     level: INFO

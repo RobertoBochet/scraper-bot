@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yaml
 
-from . import BotScraper, __version__
+from . import ScraperBot, __version__
 from .exceptions import ConfigError
 
 _LOGGER_CONFIG_PATH = (Path(__file__).parent / "logger.yaml").resolve()
@@ -33,7 +33,7 @@ def main() -> int:
         "-c",
         "--config",
         dest="config_path",
-        default="/etc/bot-scraper/config.yaml",
+        default="/etc/scraperbot/config.yaml",
         help="configuration file path",
     )
 
@@ -46,9 +46,9 @@ def main() -> int:
     # parses args
     args = vars(parser.parse_args())
 
-    # creates an instance of BotScraper
+    # creates an instance of ScraperBot
     try:
-        bot = BotScraper.make_from_config(args["config_path"])
+        bot = ScraperBot.make_from_config(args["config_path"])
     except ConfigError:
         _LOGGER.critical("Configuration issue: I give up")
         return 1
