@@ -1,0 +1,46 @@
+name: Publish container image
+
+on:
+  push:
+    tags:
+      - '?[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get version
+      run: |
+        VERSION="${GITHUB_REF/refs\/tags\//}"
+        VERSION="${VERSION/v/}"
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+    - name: Set version
+      run: |
+        echo "__version__ = '${VERSION}'" > ./scraper_bot/_version.py
+    - name: Build
+      run: |
+        docker build . -t ${GITHUB_REPOSITORY,,}
+    - name: Create tags
+      run: |
+        VERSIONS=(${VERSION//./ })
+        TAGS=(
+          "latest"
+          ${VERSIONS[0]}
+          ${VERSIONS[0]}.${VERSIONS[1]}
+          ${VERSIONS[0]}.${VERSIONS[1]}.${VERSIONS[2]}
+        )
+        echo "TAGS=${TAGS[@]}" >> $GITHUB_ENV
+    - name: Tagging
+      run: |
+        for TAG in ${TAGS}; do
+          docker tag ${GITHUB_REPOSITORY,,} ghcr.io/${GITHUB_REPOSITORY,,}:${TAG}
+        done
+    - name: Login into registry
+      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
+    - name: Push to image
+      run: |
+        for TAG in ${TAGS}; do
+          docker push ghcr.io/${GITHUB_REPOSITORY,,}:${TAG}
+        done
