@@ -2,7 +2,7 @@ import logging
 from typing import Callable
 
 import requests
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup
 
 _LOGGER = logging.getLogger(__package__)
 
@@ -32,7 +32,7 @@ class Scraper:
             if not page.ok:
                 break
 
-            soup = bs(page.text, "html.parser")
+            soup = BeautifulSoup(page.text, "html.parser")
 
             elements = soup.select(self.target)
 
