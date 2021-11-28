@@ -3,3 +3,13 @@ version: "3"
 services:
   scraper-bot:
     build: ./
+
+  debug:
+    build: ./
+    environment:
+      - SB_REDIS=redis://redis/0
+    depends_on:
+      - redis
+    volumes:
+      - "./scraper_bot:/scraper_bot:r"
+      - "./config.yaml:/etc/scraperbot/config.yaml"
