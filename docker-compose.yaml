@@ -2,7 +2,7 @@ version: "3"
 
 services:
   scraper-bot:
-    image: robertobochet/scraper-bot
+    image: ghcr.io/robertobochet/scraper-bot
     restart: unless-stopped
     environment:
       - SB_REDIS=redis://redis/0
