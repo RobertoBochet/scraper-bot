@@ -20,6 +20,8 @@ class Scraper:
     def run(self):
         _LOGGER.info(f"Start scraping {self.url}")
 
+        entities = []
+
         i = 0
         while True:
             i += 1
@@ -34,12 +36,21 @@ class Scraper:
 
             soup = BeautifulSoup(page.text, "html.parser")
 
-            elements = soup.select(self.target)
+            page_entities = soup.select(self.target)
 
-            links = [e["href"] for e in elements]
+            if len(page_entities) == 0:
+                break
 
-            _LOGGER.info(f"Found {len(links)} entries")
+            _LOGGER.info(
+                f"Found {len(page_entities)} entries in the current page"
+            )
 
-            self.on_find(*links)
+            entities += page_entities
+
+        _LOGGER.info(f"Found {len(entities)} entries")
+
+        links = [e["href"] for e in entities]
+
+        self.on_find(*links)
 
         _LOGGER.info(f"Scraping {self.url} completed")
