@@ -5,7 +5,7 @@ services:
     image: robertobochet/scraper-bot
     restart: unless-stopped
     environment:
-      - BS_BOT_REDIS=redis://redis/0
+      - SB_REDIS=redis://redis/0
     depends_on:
       - redis
     volumes:

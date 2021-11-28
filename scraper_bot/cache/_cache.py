@@ -1,9 +1,14 @@
+from redis import StrictRedis
+
+
 class Cache:
-    def __init__(self):
-        pass
+    redis: StrictRedis
 
-    def exists(self, element: str) -> bool:
-        return False
+    def __init__(self, redis: str = "redis://127.0.0.1/0"):
+        self.redis = StrictRedis.from_url(redis)
 
-    def add(self, element: str) -> None:
-        pass
+    def exists(self, entry: str) -> bool:
+        return self.redis.exists(entry)
+
+    def add(self, entry: str) -> None:
+        self.redis.set(entry, "@")

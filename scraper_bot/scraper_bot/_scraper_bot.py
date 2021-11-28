@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import yaml
 from ischedule import run_loop
 
@@ -13,12 +15,14 @@ class ScraperBot:
     tasks: list[Task]
     cache: Cache
 
-    def __init__(self, bot: dict, tasks: list):
+    def __init__(self, bot: dict, tasks: list, redis: str = None):
         self.bot = Bot.make(bot)
 
         self.tasks = [Task.make(c, on_find=self._on_find) for c in tasks]
 
-        self.cache = Cache()
+        self.cache = Cache(
+            redis if redis is not None else os.getenv("SB_REDIS")
+        )
 
     def _setup_tasks(self) -> None:
         for t in self.tasks:
