@@ -1,10 +1,10 @@
-name: code-quality
+name: test-code
 
 on:
   push:
 
 jobs:
-  code-quality:
+  test-code:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
