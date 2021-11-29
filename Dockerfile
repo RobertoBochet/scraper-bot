@@ -12,6 +12,6 @@ VOLUME /srv
 
 COPY --from=compiler /srv/dist/*.whl /
 
-RUN pip3 install *.whl
+RUN pip3 install --no-cache-dir -- *.whl
 
 ENTRYPOINT python3 -m scraper_bot
