@@ -1,0 +1,11 @@
+{
+  "$id": "https://scraper-bot.org/config.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scraper bot configuration",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    }
+  }
+}
