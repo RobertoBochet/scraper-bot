@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import logging
 import os
+import time
 
 import yaml
-from ischedule import run_loop
+from ischedule import run_pending
 
 from ..bot import Bot
 from ..cache import Cache
@@ -38,7 +39,9 @@ class ScraperBot:
 
         _LOGGER.info("Start schedule")
 
-        run_loop()
+        while True:
+            run_pending()
+            time.sleep(1)
 
     def _on_find(self, *entries: str) -> None:
         new_entries = list(filter(lambda e: not self.cache.exists(e), entries))
