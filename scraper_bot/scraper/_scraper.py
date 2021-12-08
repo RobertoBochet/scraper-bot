@@ -1,5 +1,6 @@
 import logging
 from typing import Callable
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -43,7 +44,10 @@ class Scraper:
         if len(page_entities) == 0:
             raise NoTargetFound
 
-        return [e["href"] for e in page_entities]
+        page_entities = map(lambda e: e["href"], page_entities)
+        page_entities = map(lambda e: urljoin(url, e), page_entities)
+
+        return list(page_entities)
 
     def run(self):
         _LOGGER.info(f"Start scraping {self.url}")
