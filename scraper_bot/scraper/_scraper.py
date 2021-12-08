@@ -10,6 +10,11 @@ _LOGGER = logging.getLogger(__package__)
 
 _PAGE_PLACEHOLDER = "{i}"
 
+_REQUESTS_HEADER = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:94.0) "
+    "Gecko/20100101 Firefox/94.0"
+}
+
 
 class Scraper:
     url: str
@@ -26,9 +31,7 @@ class Scraper:
         return _PAGE_PLACEHOLDER in self.url
 
     def _scrape_page(self, url) -> list:
-        _LOGGER.info(f"Get page {url}")
-
-        page = requests.get(url)
+        page = requests.get(url, headers=_REQUESTS_HEADER)
 
         if not page.ok:
             raise RequestError
