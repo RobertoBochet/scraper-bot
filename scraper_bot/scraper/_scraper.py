@@ -101,6 +101,11 @@ class Scraper:
 
         _LOGGER.info(f"Found {len(entities)} entries")
 
+        if len(entities) == 0:
+            _LOGGER.warning(
+                "Nothing found: maybe a scraper countermeasure was triggered"
+            )
+
         self.on_find(*entities)
 
         _LOGGER.info(f"Scraping {self.url} completed")
