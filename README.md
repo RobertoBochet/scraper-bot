@@ -32,3 +32,5 @@ As alternative, you can build by yourself the python package or the container
 6. Wait that the bot does its work!
 
 ## Configuration
+
+Configuration schema is a **WIP**, for the moment you can look to `config.yaml`

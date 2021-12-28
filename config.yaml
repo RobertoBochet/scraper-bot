@@ -1,0 +1,30 @@
+#######################
+# Example config.yaml #
+#######################
+# This file contains a config example
+# thought to find real estate ads
+# In particular we look for an apartment
+# in Milano at least tree rooms
+bot:
+  token: "{YOUR_BOT_TOKEN}"
+  chats:
+    # It is a list of user_id and group_id
+    # where the scraped entities have to be sent
+    - 123456789 # user
+    - -987654321 # Group
+tasks:
+  # Created an entity for each site/link
+  # In this case we look to two site
+  - name: "immobiliare"
+    # In `url`, `{i}` is a placeholder
+    # for the pagination
+    url: "https://www.immobiliare.it/affitto-case/milano/?criterio=rilevanza&localiMinimo=3&pag={i}"
+    # `target` is a unique css selector
+    # to target the <a> tag contains
+    # the link to the scraped page
+    target: "div.in-card.nd-mediaObject.nd-mediaObject--colToRow.in-realEstateCard.in-realEstateCard--interactive.in-realEstateListCard a.in-card__title"
+    interval: 3600
+  - name: "trovacasa"
+    url: "https://www.trovacasa.net/Affitto/MI/Milano/index.aspx?nrlocMin=3&pag={i}"
+    target: "ol#risultati li.annuncio a.js_linkdettaglio"
+    interval: 3600
