@@ -7,7 +7,10 @@ CONFIG_SCHEMA = {
         "bot": {
             "type": "object",
             "properties": {
-                "token": {"type": "string"},
+                "token": {
+                    "type": "string",
+                    "pattern": "^[0-9]{10}:[a-zA-Z0-9_-]{35}$",
+                },
                 "chats": {
                     "type": "array",
                     "items": {"type": "integer"},

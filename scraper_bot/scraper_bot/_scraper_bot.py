@@ -60,7 +60,8 @@ class ScraperBot:
         try:
             jsonschema.validators.validate(config, CONFIG_SCHEMA)
         except jsonschema.exceptions.ValidationError as e:
-            raise ConfigError from e
+            _LOGGER.critical(e)
+            raise ConfigError(e) from e
 
         return cls(**config)
 
