@@ -16,6 +16,7 @@ CONFIG_SCHEMA = {
             "required": ["token", "chats"],
         },
         "tasks": {"type": "array", "items": {"$ref": "#/$defs/Task"}},
+        "redis": {"type": "string"},
     },
     "$defs": {
         "Task": {
