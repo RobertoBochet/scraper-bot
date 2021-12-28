@@ -4,11 +4,14 @@ import logging
 import os
 import time
 
+import jsonschema
 import yaml
 from ischedule import run_pending
 
 from ..bot import Bot
 from ..cache import Cache
+from ..exceptions import ConfigError
+from ._config_schema import CONFIG_SCHEMA
 from ._task import Task
 
 _LOGGER = logging.getLogger(__package__)
@@ -54,6 +57,11 @@ class ScraperBot:
 
     @classmethod
     def make(cls, config: dict) -> ScraperBot:
+        try:
+            jsonschema.validators.validate(config, CONFIG_SCHEMA)
+        except jsonschema.exceptions.ValidationError as e:
+            raise ConfigError from e
+
         return cls(**config)
 
     @classmethod
