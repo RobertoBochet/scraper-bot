@@ -9,7 +9,7 @@ CONFIG_SCHEMA = {
             "properties": {
                 "token": {
                     "type": "string",
-                    "pattern": "^[0-9]{10}:[a-zA-Z0-9_-]{35}$",
+                    "pattern": "^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$",
                 },
                 "chats": {
                     "type": "array",
