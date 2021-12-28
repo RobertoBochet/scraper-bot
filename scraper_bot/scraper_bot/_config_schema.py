@@ -1,6 +1,6 @@
 CONFIG_SCHEMA = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "scraper_bot/config.schema.json",
+    "$id": "https://scraper_bot.org/config.schema.json",
     "title": "Scraper bot configuration",
     "type": "object",
     "properties": {
@@ -10,7 +10,7 @@ CONFIG_SCHEMA = {
                 "token": {"type": "string"},
                 "chats": {
                     "type": "array",
-                    "items": [{"type": "integer"}, {"type": "integer"}],
+                    "items": {"type": "integer"},
                 },
             },
             "required": ["token", "chats"],
