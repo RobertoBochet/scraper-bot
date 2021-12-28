@@ -33,4 +33,6 @@ As alternative, you can build by yourself the python package or the container
 
 ## Configuration
 
-Configuration schema is a **WIP**, for the moment you can look to `config.yaml`
+The configuration has to satisfy the json schema `scraper_bot.CONFIG_SCHEMA`.
+
+You can also find a configuration example in `config.yaml`.
