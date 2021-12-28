@@ -28,6 +28,7 @@ setup(
         "requests ~= 2.26.0",
         "ischedule ~= 1.2.2",
         "PyYAML ~= 6.0",
+        "jsonschema ~= 4.3.2",
     ],
     extras_require={"dev": ["pre-commit ~= 2.15.0"]},
     package_data={"scraper_bot": ["logger.yaml"]},
