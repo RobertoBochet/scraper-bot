@@ -27,9 +27,7 @@ class ScraperBot:
 
         self.tasks = [Task.make(c, on_find=self._on_find) for c in tasks]
 
-        self.cache = Cache(
-            redis if redis is not None else os.getenv("SB_REDIS")
-        )
+        self.cache = Cache(redis if redis is not None else os.getenv("SB_REDIS"))
 
     def _setup_tasks(self) -> None:
         for t in self.tasks:

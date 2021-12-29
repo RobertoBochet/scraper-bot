@@ -11,10 +11,7 @@ _LOGGER = logging.getLogger(__package__)
 
 _PAGE_PLACEHOLDER = "{i}"
 
-_REQUESTS_HEADER = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:94.0) "
-    "Gecko/20100101 Firefox/94.0"
-}
+_REQUESTS_HEADER = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:94.0) Gecko/20100101 Firefox/94.0"}
 
 
 class Scraper:
@@ -75,20 +72,11 @@ class Scraper:
                 # this is a WA to handle this situation
                 if (
                     len(page_entities) == len(last_page_entities)
-                    and len(
-                        [
-                            1
-                            for i, j in zip(page_entities, last_page_entities)
-                            if i != j
-                        ]
-                    )
-                    == 0
+                    and len([1 for i, j in zip(page_entities, last_page_entities) if i != j]) == 0
                 ):
                     break
 
-                _LOGGER.info(
-                    f"Found {len(page_entities)} entries in the current page"
-                )
+                _LOGGER.info(f"Found {len(page_entities)} entries in the current page")
 
                 entities += page_entities
                 last_page_entities = page_entities
@@ -102,9 +90,7 @@ class Scraper:
         _LOGGER.info(f"Found {len(entities)} entries")
 
         if len(entities) == 0:
-            _LOGGER.warning(
-                "Nothing found: maybe a scraper countermeasure was triggered"
-            )
+            _LOGGER.warning("Nothing found: maybe a scraper countermeasure was triggered")
 
         self.on_find(*entities)
 
