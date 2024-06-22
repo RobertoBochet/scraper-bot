@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "scraper-bot"
+version = "0.dev"
+description = "A telegram bot to stay tuned on real estate ads"
+authors = ["Roberto Bochet <r@robertobochet.me>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+repository = "https://github.com/RobertoBochet/bot-scraper.git"
+packages = [{ include = "scraper_bot" }]
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+]
+include = ["scraper_bot/logger.yaml"]
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-telegram-bot = ">=13.8.1,<13.9.0"
+beautifulsoup4 = ">=4.10.0,<4.11.0"
+redis = ">=4.0.2,<4.1.0"
+requests = ">=2.32.2,<2.33.0"
+ischedule = ">=1.2.2,<1.3.0"
+pyyaml = ">=6.0,<7.0"
+jsonschema = ">=4.3.2,<4.4.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = [".git", ".mypy_cache", ".pytest_cache", ".tox", "venv", "tests", "dist", "build"]
+skips = ["B113"]
+
+[tool.pytest.ini_options]
+addopts = "--order-dependencies --order-scope=session"

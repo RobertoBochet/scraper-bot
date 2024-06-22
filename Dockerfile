@@ -1,16 +1,27 @@
-FROM python:3.10.0-alpine as compiler
+FROM python:3.12-bookworm as compiler
 
-WORKDIR /srv
+RUN apt update \
+    && apt install --no-install-recommends -y \
+        curl \
+        build-essential \
+        pipx
+
+ENV PATH="/root/.local/bin:${PATH}"
+
+RUN pipx install poetry==1.8.3
+
+WORKDIR /app
 
 COPY . .
 
-RUN python3 setup.py sdist bdist_wheel
+RUN poetry build --format wheel
 
-FROM python:3.10.0-alpine
 
-VOLUME /srv
+FROM python:3.12-alpine
 
-COPY --from=compiler /srv/dist/*.whl /
+VOLUME /app
+
+COPY --from=compiler /app/dist/*.whl /
 
 RUN pip3 install --no-cache-dir -- *.whl
 

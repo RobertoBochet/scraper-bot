@@ -1,0 +1,6 @@
+/.*
+/docker-compose.yaml
+/Dockerfile
+/requirements-dev.txt
+/tox.ini
+/dist
