@@ -3,12 +3,12 @@ services:
     image: ghcr.io/robertobochet/scraper-bot
     restart: unless-stopped
     environment:
-      - SB_REDIS=redis://redis/0
+      - SB__REDIS=redis://redis/0
     depends_on:
       - redis
     volumes:
       - "./config.yaml:/etc/scraperbot/config.yaml"
 
   redis:
-    image: redis:6.2.6-alpine
+    image: redis:7.2-alpine
     restart: always

@@ -26,7 +26,7 @@ class Scraper:
 
     @property
     def is_multipage(self):
-        return _PAGE_PLACEHOLDER in self.url
+        return _PAGE_PLACEHOLDER in str(self.url)
 
     def _scrape_page(self, url) -> list:
         page = requests.get(url, headers=_REQUESTS_HEADER)
@@ -56,7 +56,7 @@ class Scraper:
             i = 0
             while True:
                 i += 1
-                url = self.url.replace(_PAGE_PLACEHOLDER, f"{i}")
+                url = str(self.url).replace(_PAGE_PLACEHOLDER, f"{i}")
 
                 _LOGGER.info(f"Get page {url}")
 

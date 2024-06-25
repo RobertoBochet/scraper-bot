@@ -5,24 +5,25 @@ import time
 
 from ischedule import run_pending
 
-from ..bot import Bot
 from ..cache import Cache
+from ..notifications.notifications import NotificationsManager
+from ..settings import Settings
 from ._task import Task
 
 _LOGGER = logging.getLogger(__package__)
 
 
 class ScraperBot:
-    bot: Bot
+    notificationsManager: NotificationsManager
     tasks: list[Task]
     cache: Cache
 
-    def __init__(self, bot: dict, tasks: list, redis: str):
-        self.bot = Bot.make(bot)
+    def __init__(self, settings: Settings):
+        self.notificationsManager = NotificationsManager(settings.notifications)
 
-        self.tasks = [Task.make(c, on_find=self._on_find) for c in tasks]
+        self.tasks = [Task(**c.model_dump(), on_find=self._on_find) for c in settings.tasks]
 
-        self.cache = Cache(str(redis))
+        self.cache = Cache(str(settings.redis))
 
     def _setup_tasks(self) -> None:
         for t in self.tasks:
@@ -45,5 +46,5 @@ class ScraperBot:
         _LOGGER.info(f"Found {len(new_entries)} new entries")
 
         for n in new_entries:
-            self.bot.send_found(n)
+            self.notificationsManager.notify({"url": n})
             self.cache.add(n)

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import argparse
+import json
 import logging.config
 import signal
 import sys
+from argparse import ArgumentParser
 
 from pydantic import ValidationError
 
@@ -12,7 +13,7 @@ from .settings import Settings
 
 
 def main() -> int:
-    signal.signal(signal.SIGINT, lambda: sys.exit(3))
+    signal.signal(signal.SIGINT, lambda: sys.exit(0))
 
     # loads logger config
     setup_default_logger()
@@ -20,13 +21,20 @@ def main() -> int:
     LOGGER = logging.getLogger(__package__)
 
     # gets inline arguments
-    parser = argparse.ArgumentParser(prog="bot_scraper")
+    parser = ArgumentParser(prog="bot_scraper")
 
     parser.add_argument(
         "-c",
         "--config",
         dest="config_path",
         help="configuration file path",
+    )
+
+    parser.add_argument(
+        "--config-schema",
+        action="store_true",
+        dest="show_config_schema",
+        help="show config json schema and exit",
     )
 
     parser.add_argument(
@@ -37,6 +45,10 @@ def main() -> int:
 
     # parses args
     args = vars(parser.parse_args())
+
+    if args.get("show_config_schema"):
+        print(json.dumps(Settings.model_json_schema(), indent=2))
+        return 0
 
     if config_path := args.get("config_path"):
         Settings.set_settings_path(config_path)
@@ -49,7 +61,7 @@ def main() -> int:
         return 1
 
     # creates an instance of ScraperBot
-    bot = ScraperBot(**settings.model_dump())
+    bot = ScraperBot(settings)
 
     LOGGER.info("bot_scraper is ready to start")
 
