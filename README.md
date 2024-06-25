@@ -2,13 +2,13 @@
 
 [![GitHub](https://img.shields.io/github/license/RobertoBochet/scraper-bot?style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
 [![GitHub Version](https://img.shields.io/github/v/tag/RobertoBochet/scraper-bot?label=version&style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RobertoBochet/scraper-bot/test-code?label=test%20code&style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/RobertoBochet/scraper-bot/build-container?label=build%20container&style=flat-square)](https://github.com/RobertoBochet/scraper-bot/pkgs/container/scraper-bot)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/RobertoBochet/scraper-bot/test-code.yml?label=test%20code&style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/RobertoBochet/scraper-bot/build-container.yml?label=build%20container&style=flat-square)](https://github.com/RobertoBochet/scraper-bot/pkgs/container/scraper-bot)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/RobertoBochet/scraper-bot?style=flat-square)](https://www.codefactor.io/repository/github/robertobochet/scraper-bot)
 
 This is a bot thought to do periodical scraping of ads from commercial websites.
 
-Found a new ad the bot will send it to you on [Telegram](https://telegram.org)
+Found a new ad the bot will send it to you exploiting [Apprise](https://github.com/caronc/apprise) channels
 
 ## Deploy
 
@@ -33,6 +33,15 @@ As alternative, you can build by yourself the python package or the container
 
 ## Configuration
 
-The configuration has to satisfy the json schema `scraper_bot.CONFIG_SCHEMA`.
+By default the bot looks for a configuration file in the following path `./config.y(a)ml` and `/etc/scaraper-bot/config.y(a)ml`. You cna override this behavior passing via command line the `--config` argument followed by the config file path
+```bash
+scraper_bot --config /path/to/scraper-bot-config.yaml
+```
+
+The configuration file has to satisfy the pydantic model which you can find in `scraper_bot.settings`.
+Furthermore you can get the config json schema from command line with `--config-schema` argument
+```bash
+scraper_bot --config-schema
+```
 
 You can also find a configuration example in `config.yaml`.

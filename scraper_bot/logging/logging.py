@@ -42,3 +42,6 @@ def setup_default_logger(level: str | int = logging.INFO) -> None:
 
     for logger in [v for k, v in logging.root.manager.loggerDict.items() if k.startswith(f"{_package_name}.")]:
         logger.disabled = False
+
+    for name, logger in logging.root.manager.loggerDict.items():
+        logger.disabled = not name.startswith(f"{_package_name}.")

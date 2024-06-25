@@ -5,13 +5,21 @@
 # thought to find real estate ads
 # In particular we look for an apartment
 # in Milano at least tree rooms
-bot:
-  token: "{YOUR_BOT_TOKEN}"
-  chats:
-    # It is a list of user_id and group_id
+notifications:
+  title: "New ads found"
+  message: |
+    **Ads found found**
+
+    You can found it [here]({{url}})
+  format: markdown
+  channels:
+    # It is a list of apprise supported channels
     # where the scraped entities have to be sent
-    - 123456789 # user
-    - -987654321 # Group
+    - "tgram://{YOUR_BOT_TOKEN}/{CHAT_ID1}"
+    - "tgram://{YOUR_BOT_TOKEN}/{CHAT_ID2}"
+    - message: "Found a new adds at {{url}}"
+      format: "text"
+      uri: "discord://webhook_id/webhook_token"
 tasks:
   # Created an entity for each site/link
   # In this case we look to two site

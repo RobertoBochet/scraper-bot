@@ -33,7 +33,3 @@ class Task(Scraper):
         schedule(self.run, interval=self.interval)
 
         _LOGGER.info(f"Scheduled task {self.name}")
-
-    @classmethod
-    def make(cls, config: dict, **kwargs) -> Task:
-        return cls(**config, **kwargs)

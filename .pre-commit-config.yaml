@@ -82,4 +82,4 @@ repos:
     rev: v1.3.3
     hooks:
       - id: python-safety-dependencies-check
-        args: [ "-i", "64459,64396,67895" ]
+        args: [ "-i", "70612" ]
