@@ -13,18 +13,20 @@ classifiers=[
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3",
 ]
-include = ["scraper_bot/logger.yaml"]
 
 
 [tool.poetry.dependencies]
 python = "^3.12"
-python-telegram-bot = ">=13.8.1,<13.9.0"
+python-telegram-bot = "^20.0"
 beautifulsoup4 = ">=4.10.0,<4.11.0"
-redis = ">=4.0.2,<4.1.0"
-requests = ">=2.32.2,<2.33.0"
+redis = "^4.6.0"
+requests = "^2.32.3"
 ischedule = ">=1.2.2,<1.3.0"
 pyyaml = ">=6.0,<7.0"
-jsonschema = ">=4.3.2,<4.4.0"
+pydantic = "^2.7.4"
+pydantic-settings = "^2.3.4"
+termcolor = "^2.4.0"
+urllib3 = "^2.2.2"
 
 
 [tool.poetry.group.dev.dependencies]

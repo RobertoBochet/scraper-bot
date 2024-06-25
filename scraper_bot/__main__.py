@@ -1,30 +1,23 @@
 #!/usr/bin/env python3
 import argparse
-import logging
 import logging.config
 import signal
 import sys
-from pathlib import Path
 
-import yaml
+from pydantic import ValidationError
 
 from . import ScraperBot, __version__
-from .exceptions import ConfigError
-
-_LOGGER_CONFIG_PATH = (Path(__file__).parent / "logger.yaml").resolve()
-_LOGGER = logging.getLogger(__package__)
+from .logging import setup_default_logger
+from .settings import Settings
 
 
 def main() -> int:
     signal.signal(signal.SIGINT, lambda: sys.exit(3))
 
     # loads logger config
-    try:
-        with open(_LOGGER_CONFIG_PATH) as f:
-            logging.config.dictConfig(yaml.safe_load(f))
-    except FileNotFoundError:
-        _LOGGER.critical("Logger configuration not found")
-        return 2
+    setup_default_logger()
+
+    LOGGER = logging.getLogger(__package__)
 
     # gets inline arguments
     parser = argparse.ArgumentParser(prog="bot_scraper")
@@ -33,27 +26,32 @@ def main() -> int:
         "-c",
         "--config",
         dest="config_path",
-        default="/etc/scraperbot/config.yaml",
         help="configuration file path",
     )
 
     parser.add_argument(
         "--version",
         action="version",
-        version="bot_scraper {}".format(__version__),
+        version=f"bot_scraper {__version__}",
     )
 
     # parses args
     args = vars(parser.parse_args())
 
-    # creates an instance of ScraperBot
+    if config_path := args.get("config_path"):
+        Settings.set_settings_path(config_path)
+        LOGGER.info(f"Using config file '{config_path}'")
+
     try:
-        bot = ScraperBot.make_from_config(args["config_path"])
-    except ConfigError:
-        _LOGGER.critical("Configuration issue: I give up")
+        settings = Settings()
+    except ValidationError as e:
+        LOGGER.critical(f"Configuration issue: {e}")
         return 1
 
-    _LOGGER.info("bot_scraper is ready to start")
+    # creates an instance of ScraperBot
+    bot = ScraperBot(**settings.model_dump())
+
+    LOGGER.info("bot_scraper is ready to start")
 
     # starts bot
     bot.start()
