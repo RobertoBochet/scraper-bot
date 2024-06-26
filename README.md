@@ -22,7 +22,7 @@ As alternative, you can build by yourself the python package or the container
 ### Fast deploy (docker-compose)
 
 1. [Create a telegram bot](https://core.telegram.org/bots#3-how-do-i-create-a-bot) and retrieve its token
-2. Download `config.yaml` and put into `/etc/scraperbot` folder
+2. Download `config.example.yaml` and rename it to `config.yaml`
 3. Change the configuration follow the [guidelines](#configuration)
 4. Download `docker-compose.yaml`
 5. Start the scraper with `docker-compose`
@@ -44,4 +44,4 @@ Furthermore you can get the config json schema from command line with `--config-
 scraper_bot --config-schema
 ```
 
-You can also find a configuration example in `config.yaml`.
+You can also find a configuration example in `config.example.yaml`.

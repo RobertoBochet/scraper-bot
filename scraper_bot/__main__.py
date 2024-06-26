@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+import asyncio
 import json
 import logging.config
-import signal
-import sys
 from argparse import ArgumentParser
+from asyncio import CancelledError, create_task
+from signal import SIGINT
 
 from pydantic import ValidationError
 
@@ -13,8 +14,6 @@ from .settings import Settings
 
 
 def main() -> int:
-    signal.signal(signal.SIGINT, lambda: sys.exit(0))
-
     # loads logger config
     setup_default_logger()
 
@@ -28,6 +27,14 @@ def main() -> int:
         "--config",
         dest="config_path",
         help="configuration file path",
+    )
+
+    parser.add_argument(
+        "-d",
+        "--daemonize",
+        action="store_true",
+        dest="daemonize",
+        help="run the scraper as a daemon instead run only once",
     )
 
     parser.add_argument(
@@ -46,6 +53,8 @@ def main() -> int:
     # parses args
     args = vars(parser.parse_args())
 
+    cli_override_settings = {}
+
     if args.get("show_config_schema"):
         print(json.dumps(Settings.model_json_schema(), indent=2))
         return 0
@@ -54,8 +63,11 @@ def main() -> int:
         Settings.set_settings_path(config_path)
         LOGGER.info(f"Using config file '{config_path}'")
 
+    if args.get("daemonize"):
+        cli_override_settings["daemonize"] = True
+
     try:
-        settings = Settings()
+        settings = Settings(**cli_override_settings)
     except ValidationError as e:
         LOGGER.critical(f"Configuration issue: {e}")
         return 1
@@ -65,11 +77,25 @@ def main() -> int:
 
     LOGGER.info("bot_scraper is ready to start")
 
-    # starts bot
-    bot.start()
+    if not settings.daemonize:
+        asyncio.run(bot.run_once())
+        return 0
 
+    async def daemonize():
+        LOGGER.info("Starting daemon")
+        task = create_task(bot.run())
+
+        task.get_loop().add_signal_handler(SIGINT, task.cancel)
+
+        try:
+            await task
+        except CancelledError:
+            LOGGER.info("Daemon has been stopped")
+
+    # starts bot as daemon
+    asyncio.run(daemonize())
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    exit(main())

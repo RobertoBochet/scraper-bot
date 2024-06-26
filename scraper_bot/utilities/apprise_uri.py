@@ -18,5 +18,5 @@ class SecretAppriseUri(SecretStr, str):
 
     def _display(self) -> str:
         v = self.get_secret_value()
-        i, j = len(v) // 4, len(v) * 3 // 4
+        i, j = len(v) // 6, len(v) * 5 // 6
         return f"{v[:i]}*****{v[j:]}"

@@ -1,0 +1,42 @@
+#######################
+# Example config.yaml #
+#######################
+# This file contains a config example
+# thought to find real estate ads
+# In particular we look for an apartment
+# in Milano at least tree rooms
+notifications:
+  message: |
+    # [{{title}}]({{url}})
+    {% if location %}📍 *{{location}}*{% endif %}
+    {% if price %}💶 *{{price}}€*{% endif %}
+    {% if size %}📐 *{{size}}m²*{% endif %}
+  format: markdown
+  channels:
+    # It is a list of apprise supported channels
+    # where the scraped entities have to be sent
+    - "tgram://{YOUR_BOT_TOKEN}/{CHAT_ID1}"
+    - "tgram://{YOUR_BOT_TOKEN}/{CHAT_ID2}"
+    - message: "Found a new adds at {{url}}"
+      format: "text"
+      uri: "discord://webhook_id/webhook_token"
+tasks:
+  - name: "immobiliare.it"
+    url: "https://www.immobiliare.it/affitto-case/lodi/?criterio=rilevanza&localiMinimo=3"
+    target: |
+      [...document.querySelectorAll("li.in-searchLayoutListItem")].map(t =>({
+        url: t.querySelector("a.in-listingCardTitle")?.href,
+        title: t.querySelector("a.in-listingCardTitle")?.innerText,
+        price: t.querySelector(".in-listingCardPrice span")?.innerText,
+        size: t.querySelector(".in-listingCardFeatureList__item:nth-child(2) span")?.innerText.replace(/[^0-9]+/g,"")
+      }))
+  - name: "mioaffitto"
+    url: "https://www.mioaffitto.it/search?provincia=50&poblacion=67355"
+    target: |
+      [...document.querySelectorAll(".property-list .propertyCard:not(.property-alternative)")].map(t=> ({
+        url: t.querySelector("a")?.href,
+        title: t.querySelector("a p")?.innerText,
+        price: t.querySelector(".propertyCard__price--value")?.innerText.replace(/[^0-9]+/g,""),
+        size: t.querySelector(".propertyCard__details li:has(.fa-size-o)")?.innerText.replace(/[^0-9]+/g,""),
+        location: t.querySelector(".propertyCard__location p")?.innerText
+      }))
