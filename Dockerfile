@@ -17,12 +17,16 @@ COPY . .
 RUN poetry build --format wheel
 
 
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 VOLUME /app
 
 COPY --from=compiler /app/dist/*.whl /
 
 RUN pip3 install --no-cache-dir -- *.whl
+
+RUN playwright install --with-deps firefox
+
+ENV SB__BROWSER__TYPE="firefox"
 
 ENTRYPOINT python3 -m scraper_bot

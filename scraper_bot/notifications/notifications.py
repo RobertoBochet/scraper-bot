@@ -1,11 +1,15 @@
+from asyncio import gather
 from logging import getLogger
 from typing import Any
 
 from apprise import Apprise
 
-from scraper_bot.settings.settings import NotificationChannel, NotificationsSettings
+from scraper_bot.settings.notifications import (
+    NotificationChannel,
+    NotificationsSettings,
+)
 
-_LOGGER = getLogger(__name__)
+_LOGGER = getLogger(__package__)
 
 
 class NotificationsManager:
@@ -25,9 +29,17 @@ class NotificationsManager:
     def channels(self) -> list[NotificationChannel]:
         return self._channels
 
-    def notify(self, entity: dict[str, Any]) -> None:
-        for c in self.channels:
-            if not self._apprise.notify(
-                body=c.message_template.render(**entity), title=c.title, body_format=c.format, tag=c.tag
-            ):
-                _LOGGER.error(f"Failed to notify {c.uri}")
+    async def _notify(self, channel: NotificationChannel, entity: dict[str, Any]) -> None:
+        result = await self._apprise.async_notify(
+            body=channel.message_template.render(**entity),
+            title=channel.title,
+            body_format=channel.format,
+            tag=channel.tag,
+        )
+        if not result:
+            _LOGGER.error(f"Failed to notify {channel.uri}")
+
+    async def notify(self, *entity: dict[str, Any]) -> None:
+        _LOGGER.info(f"Notifying {len(entity)} entities to {len(self._channels)} channels")
+        await gather(*(self._notify(c, e) for c in self.channels for e in entity))
+        _LOGGER.info("Notifying completed")
