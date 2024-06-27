@@ -1,4 +1,4 @@
-name: build-container
+name: "Publish release"
 
 on:
   push:
@@ -6,11 +6,12 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  build-container:
+  publish-container-image:
+    name: "Publish container image to github registry"
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Get version
       run: |
         VERSION="${GITHUB_REF/refs\/tags\//}"
@@ -44,3 +45,34 @@ jobs:
         for TAG in ${TAGS}; do
           docker push ghcr.io/${GITHUB_REPOSITORY,,}:${TAG}
         done
+
+  publish-python-package:
+    name: "Publish python package to pypi"
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get version
+        run: |
+          VERSION="${GITHUB_REF/refs\/tags\//}"
+          VERSION="${VERSION/v/}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Set version
+        run: |
+          sed -i "s|^version[\ ]*=.*|version = \"${VERSION}\"|g" pyproject.toml
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: "3.12"
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1.3.4
+        with:
+          version: '1.8.3'
+      - name: Build package
+        run: |
+          poetry build
+      - name: pypi-publish
+        uses: pypa/gh-action-pypi-publish@v1.9.0
