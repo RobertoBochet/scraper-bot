@@ -1,10 +1,12 @@
 from logging import Logger, getLogger
 
+from playwright.async_api import Error, Page
 from playwright_stealth import stealth_async
 
 from scraper_bot.settings.task import TaskSettings
 
 from .browser_manager import BrowserManager
+from .exceptions import TargetScriptError
 from .scraper_task_result import ScraperTaskResult
 
 
@@ -29,7 +31,7 @@ class ScraperTask:
         self._logger.info("Starting scraper task")
 
         async with self._browser_manager.launch_browser() as browser:
-            page = await browser.new_page()
+            page: Page = await browser.new_page()
 
             if self._browser_manager.stealth_enabled:
                 await stealth_async(page)
@@ -38,9 +40,20 @@ class ScraperTask:
 
             # TODO add support for waitingForTarget
 
-            data: str | list[str] | dict | list[dict] = await page.evaluate(self.settings.target)
+            self._logger.info("Starting target script evaluated")
+            try:
+                data: str | list[str] | dict | list[dict] = await page.evaluate(self.settings.target)
+            except Error as e:
+                self._logger.error("Target script error")
+                self._logger.debug(e)
+                raise TargetScriptError()
+
+            self._logger.info("Target script evaluated")
+            self._logger.debug(data)
 
             # TODO add support for nextPageTarget
+
+        self._logger.info("Completed scraping")
 
         if not isinstance(data, list):
             data = list(data)

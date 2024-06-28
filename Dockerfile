@@ -19,11 +19,13 @@ RUN poetry build --format wheel
 
 FROM python:3.12-slim
 
-VOLUME /app
+WORKDIR /app
 
-COPY --from=compiler /app/dist/*.whl /
+COPY --from=compiler /app/dist/*.whl .
 
 RUN pip3 install --no-cache-dir -- *.whl
+
+RUN rm *.whl
 
 RUN playwright install --with-deps firefox
 

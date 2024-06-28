@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import asyncio
 import json
-import logging.config
 from argparse import ArgumentParser
 from asyncio import CancelledError, create_task
+from logging import DEBUG, getLogger
 from signal import SIGINT
 
 from pydantic import ValidationError
@@ -14,13 +14,10 @@ from .settings import Settings
 
 
 def main() -> int:
-    # loads logger config
-    setup_default_logger()
-
-    LOGGER = logging.getLogger(__package__)
-
     # gets inline arguments
     parser = ArgumentParser(prog="bot_scraper")
+
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="Increase logging verbosity")
 
     parser.add_argument(
         "-c",
@@ -53,6 +50,11 @@ def main() -> int:
     # parses args
     args = vars(parser.parse_args())
 
+    # loads logger config
+    setup_default_logger(DEBUG if args.get("verbose", None) else None)
+
+    logger = getLogger(__package__)
+
     cli_override_settings = {}
 
     if args.get("show_config_schema"):
@@ -61,7 +63,7 @@ def main() -> int:
 
     if config_path := args.get("config_path"):
         Settings.set_settings_path(config_path)
-        LOGGER.info(f"Using config file '{config_path}'")
+        logger.info(f"Using config file '{config_path}'")
 
     if args.get("daemonize"):
         cli_override_settings["daemonize"] = True
@@ -69,20 +71,20 @@ def main() -> int:
     try:
         settings = Settings(**cli_override_settings)
     except ValidationError as e:
-        LOGGER.critical(f"Configuration issue: {e}")
+        logger.critical(f"Configuration issue: {e}")
         return 1
 
     # creates an instance of ScraperBot
     bot = ScraperBot(settings)
 
-    LOGGER.info("bot_scraper is ready to start")
+    logger.info("bot_scraper is ready to start")
 
     if not settings.daemonize:
         asyncio.run(bot.run_once())
         return 0
 
     async def daemonize():
-        LOGGER.info("Starting daemon")
+        logger.info("Starting daemon")
         task = create_task(bot.run())
 
         task.get_loop().add_signal_handler(SIGINT, task.cancel)
@@ -90,7 +92,7 @@ def main() -> int:
         try:
             await task
         except CancelledError:
-            LOGGER.info("Daemon has been stopped")
+            logger.info("Scraper bot has been stopped")
 
     # starts bot as daemon
     asyncio.run(daemonize())

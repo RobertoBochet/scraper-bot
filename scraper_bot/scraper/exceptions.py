@@ -1,10 +1,6 @@
-class ScraperError(Exception):
+class ScraperTaskError(Exception):
     pass
 
 
-class NoTargetFound(ScraperError):
-    pass
-
-
-class RequestError(ScraperError):
+class TargetScriptError(ScraperTaskError):
     pass

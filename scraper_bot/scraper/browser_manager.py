@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from logging import getLogger
+from typing import AsyncIterator
 
 from playwright.async_api import Browser, Error, async_playwright
 
@@ -13,11 +14,13 @@ class BrowserManager:
         self._settings = settings
 
     @asynccontextmanager
-    async def launch_browser(self) -> Browser:
+    async def launch_browser(self) -> AsyncIterator[Browser]:
         async with async_playwright() as pw:
             browser_types = [
                 next((b for b in [pw.firefox, pw.chromium, pw.webkit] if b.name == i)) for i in self._settings.type
             ]
+
+            _LOGGER.info(browser_types)
 
             for browser_type in browser_types:
                 try:
@@ -33,6 +36,7 @@ class BrowserManager:
                     yield browser
                 finally:
                     await browser.close()
+                    _LOGGER.debug("Close browser")
 
                 break
 
