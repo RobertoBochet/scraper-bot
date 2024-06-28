@@ -6,6 +6,8 @@ from playwright.async_api import Browser, Error, async_playwright
 
 from scraper_bot.settings.browser import BrowserSettings
 
+from .exceptions import NoBrowserAvailable
+
 _LOGGER = getLogger(__name__)
 
 
@@ -20,25 +22,33 @@ class BrowserManager:
                 next((b for b in [pw.firefox, pw.chromium, pw.webkit] if b.name == i)) for i in self._settings.type
             ]
 
-            _LOGGER.info(browser_types)
+            _LOGGER.debug(browser_types)
+
+            browser: Browser | None = None
 
             for browser_type in browser_types:
                 try:
                     browser = await browser_type.launch(headless=self._settings.headless)
                 except Error as e:
                     _LOGGER.debug(e)
-                    _LOGGER.warning(f"{browser_type.name} not available")
+                    _LOGGER.warning(f"Impossible to run {browser_type.name}")
                     continue
 
-                _LOGGER.info(f"Use {browser.browser_type.name}")
+            if browser is None:
+                _LOGGER.error(
+                    "No browser available. "
+                    "Did you remember to install one with `playwright install --with-deps firefox`?"
+                )
+                raise NoBrowserAvailable()
 
-                try:
-                    yield browser
-                finally:
-                    await browser.close()
-                    _LOGGER.debug("Close browser")
+            _LOGGER.info(f"Use {browser.browser_type.name}")
 
-                break
+            try:
+                yield browser
+                return
+            finally:
+                await browser.close()
+                _LOGGER.debug("Close browser")
 
     @property
     def stealth_enabled(self) -> bool:

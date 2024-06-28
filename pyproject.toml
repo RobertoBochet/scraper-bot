@@ -33,6 +33,7 @@ playwright = "^1.44.0"
 playwright-stealth = "^1.0.6"
 setuptools = "^70.1.1"
 aiolimiter = "^1.1.0"
+black = "^24.4.2"
 
 
 [tool.poetry.group.dev.dependencies]

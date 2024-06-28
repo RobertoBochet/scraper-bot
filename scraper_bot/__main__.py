@@ -2,10 +2,11 @@
 import asyncio
 import json
 from argparse import ArgumentParser
-from asyncio import CancelledError, create_task
+from asyncio import AbstractEventLoop, new_event_loop
 from logging import DEBUG, INFO, getLogger
 from signal import SIGINT
 
+import black
 from pydantic import ValidationError
 
 from . import ScraperBot, __version__
@@ -44,7 +45,7 @@ def main() -> int:
     parser.add_argument(
         "--version",
         action="version",
-        version=f"bot_scraper {__version__}",
+        version=f"scraper-bot {__version__}",
     )
 
     # parses args
@@ -74,28 +75,36 @@ def main() -> int:
         logger.critical(f"Configuration issue: {e}")
         return 1
 
+    logger.debug(black.format_str(repr(settings), mode=black.FileMode(line_length=60)))
+
     # creates an instance of ScraperBot
     bot = ScraperBot(settings)
 
-    logger.info("bot_scraper is ready to start")
+    logger.info("Scraper bot is ready to start")
+
+    async def clean_loop(loop: AbstractEventLoop):
+        await asyncio.gather(
+            *(t.cancel() for t in asyncio.all_tasks() if t is not asyncio.current_task()), return_exceptions=True
+        )
+        loop.stop()
+
+    loop = new_event_loop()
+    loop.add_signal_handler(SIGINT, lambda: asyncio.create_task(clean_loop(loop)))
 
     if not settings.daemonize:
-        asyncio.run(bot.run_once())
-        return 0
+        task = loop.create_task(bot.run_once())
+    else:
+        task = loop.create_task(bot.run())
 
-    async def daemonize():
-        logger.info("Starting daemon")
-        task = create_task(bot.run())
+    try:
+        loop.run_until_complete(task)
+    except asyncio.CancelledError:
+        logger.info("Scraper bot has been stopped")
+        if not settings.daemonize:
+            return 1
+    finally:
+        loop.close()
 
-        task.get_loop().add_signal_handler(SIGINT, task.cancel)
-
-        try:
-            await task
-        except CancelledError:
-            logger.info("Scraper bot has been stopped")
-
-    # starts bot as daemon
-    asyncio.run(daemonize())
     return 0
 
 
