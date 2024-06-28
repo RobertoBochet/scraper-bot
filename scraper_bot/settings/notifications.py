@@ -6,7 +6,6 @@ from aiolimiter import AsyncLimiter
 from apprise import NOTIFY_FORMATS, NotifyFormat
 from jinja2 import BaseLoader, Environment, Template
 from pydantic import BaseModel, Field, PositiveFloat, PrivateAttr, model_validator
-from pydantic_settings import BaseSettings
 
 from scraper_bot.utilities.apprise_uri import SecretAppriseUri
 
@@ -37,7 +36,7 @@ class NotificationChannel(BaseModel):
         return AsyncLimiter(self.rateLimit, time_period=1)
 
 
-class NotificationsSettings(BaseSettings):
+class NotificationsSettings(BaseModel):
     title: Annotated[str, Field(description="Title of the notification", default="")]
     message: Annotated[
         str, Field(description="The message of the notification", default="New entry found [here]({{url}})")

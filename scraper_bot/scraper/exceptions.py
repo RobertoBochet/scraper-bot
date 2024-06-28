@@ -4,3 +4,7 @@ class ScraperTaskError(Exception):
 
 class TargetScriptError(ScraperTaskError):
     pass
+
+
+class NoBrowserAvailable(ScraperTaskError):
+    pass
