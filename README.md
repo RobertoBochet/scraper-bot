@@ -18,9 +18,16 @@ Found a new ad the bot will send it to you exploiting [Apprise](https://github.c
 The relative package is available on [Pypi](https://pypi.org/project/scraper-bot/)
 
 ```shell
-pipx install scraper-bot
+pip install scraper-bot
 ```
-The package provide the following command
+The package heavily relays on [`playwright`](https://playwright.dev/python/) package, so before start to use the bot you have to install a playwright browser
+```shell
+playwright install --with-deps firefox
+```
+You can found further information in the [`playwright` documentation](https://playwright.dev/python/docs/browsers)
+_(n.b. the bot are not limited to use firefox only)_
+
+The `scraper-bot` package provide the following command to run the bot
 ```shell
 scraper-bot
 ```

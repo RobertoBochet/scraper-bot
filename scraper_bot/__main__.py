@@ -3,7 +3,7 @@ import asyncio
 import json
 from argparse import ArgumentParser
 from asyncio import CancelledError, create_task
-from logging import DEBUG, getLogger
+from logging import DEBUG, INFO, getLogger
 from signal import SIGINT
 
 from pydantic import ValidationError
@@ -51,7 +51,7 @@ def main() -> int:
     args = vars(parser.parse_args())
 
     # loads logger config
-    setup_default_logger(DEBUG if args.get("verbose", None) else None)
+    setup_default_logger(DEBUG if args.get("verbose", None) else INFO)
 
     logger = getLogger(__package__)
 
