@@ -15,7 +15,7 @@ class CustomFormatter(Formatter):
     def get_format(self, level: int) -> str:
         match level:
             case logging.DEBUG:
-                return colored(f"{self._format} (%(filename)s:%(lineno)d)", "grey")
+                return colored(f"{self._format} (%(filename)s:%(lineno)d)", "dark_grey")
             case logging.INFO:
                 return colored(self._format, "white")
             case logging.WARNING:

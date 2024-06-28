@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/github/license/RobertoBochet/scraper-bot?style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
 [![GitHub Version](https://img.shields.io/github/v/tag/RobertoBochet/scraper-bot?label=version&style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
-[![PyPI - Version](https://img.shields.io/pypi/v/scraper-bot)](https://pypi.org/project/scraper-bot/)
+[![PyPI - Version](https://img.shields.io/pypi/v/scraper-bot?style=flat-square)](https://pypi.org/project/scraper-bot/)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/RobertoBochet/scraper-bot/test-code.yml?label=test%20code&style=flat-square)](https://github.com/RobertoBochet/scraper-bot)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/RobertoBochet/scraper-bot/release.yml?label=publish%20release&style=flat-square)](https://github.com/RobertoBochet/scraper-bot/pkgs/container/scraper-bot)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/RobertoBochet/scraper-bot?style=flat-square)](https://www.codefactor.io/repository/github/robertobochet/scraper-bot)

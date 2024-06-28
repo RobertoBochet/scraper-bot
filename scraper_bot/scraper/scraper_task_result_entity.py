@@ -28,7 +28,8 @@ class ScraperTaskResultEntity(Mapping):
         return len(self._data) + 1
 
     def __str__(self) -> str:
-        return f"{self._task.name}#{"|".join(["=".join(v) for v in sorted(self._data.items(), key=lambda x: x[0])])}"
+        fields = "|".join([f"{k}={v}" for k, v in sorted(self._data.items(), key=lambda x: x[0]) if v is not None])
+        return f"{self._task.name}#{fields}"
 
     def __hash__(self) -> int:
         return int(sha256(str(self).encode()).hexdigest(), 16)
