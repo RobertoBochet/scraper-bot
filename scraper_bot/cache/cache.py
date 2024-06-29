@@ -1,27 +1,27 @@
-from asyncio import gather
+from abc import ABC
 from typing import Callable, TypeVar
-
-from redis.asyncio import StrictRedis
 
 T = TypeVar("T")
 
 
-class Cache:
-    redis: StrictRedis
-
-    def __init__(self, redis: str = "redis://127.0.0.1/0"):
-        self.redis = StrictRedis.from_url(redis)
-
+class Cache(ABC):
     async def exists(self, entry: str) -> bool:
-        return await self.redis.exists(entry) != 0
+        pass
 
     async def add(self, entry: str) -> None:
-        await self.redis.set(entry, "@")
+        pass
 
-    async def _none_if_exists(self, entry: str, value: T) -> T | None:
-        if not await self.exists(entry):
-            return value
-        return None
+    async def filter_exists(self, *entries: T, to_fingerprint: Callable[[T], str]) -> list[T]:
+        pass
 
-    async def filter_exists(self, *entries: T, to_id: Callable[[T], str]) -> list[T]:
-        return [v for v in await gather(*(self._none_if_exists(to_id(e), e) for e in entries)) if v is not None]
+    async def check(self) -> None:
+        pass
+
+    async def close(self) -> None:
+        pass
+
+    async def __aenter__(self):
+        await self.check()
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()

@@ -1,12 +1,13 @@
-import logging
 from asyncio import gather, sleep
+from logging import getLogger
 
-from scraper_bot.cache import Cache
+from scraper_bot.cache import Cache, make_cache
+from scraper_bot.cache.exceptions import CacheError
 from scraper_bot.notifications import NotificationsManager
 from scraper_bot.scraper import Scraper
 from scraper_bot.settings import Settings
 
-_LOGGER = logging.getLogger(__package__)
+_LOGGER = getLogger(__package__)
 
 
 class ScraperBot:
@@ -23,13 +24,19 @@ class ScraperBot:
         self._scraper = Scraper(browser_settings=self._settings.browser)
         self._scraper.add_task(*self._settings.tasks)
 
-        self._cache = Cache(str(settings.redis))
+        self._cache = make_cache(settings.cache)
 
-    async def _run(self) -> None:
+    async def _run(self) -> int:
+        try:
+            await self._cache.check()
+        except CacheError:
+            _LOGGER.critical("Cache unavailable")
+            return 1
+
         tasks_results = await self._scraper.run()
 
         new_entries = await self._cache.filter_exists(
-            *[t for r in tasks_results for t in r], to_id=lambda x: str(hash(x))
+            *[t for r in tasks_results for t in r], to_fingerprint=lambda x: str(hash(x))
         )
 
         if len(new_entries):
@@ -41,14 +48,26 @@ class ScraperBot:
         else:
             _LOGGER.info("No new entry was found, skip notifications")
 
-    async def run_once(self) -> None:
-        await self._run()
+        return 0
 
-    async def run(self) -> None:
+    async def run_once(self) -> int:
+        try:
+            return await self._run()
+        finally:
+            await self.close()
+
+    async def run(self) -> int:
         _LOGGER.info(f"Start schedule with interval of {self._settings.interval}")
 
         while True:
             _LOGGER.info("Starting new iteration")
-            await self._run()
+            r = await self._run()
+            if r != 0:
+                return r
+            await self.close()
+
             _LOGGER.info(f"Waiting {self._settings.interval} for the next iteration")
             await sleep(self._settings.interval.total_seconds())
+
+    async def close(self) -> None:
+        await self._cache.close()

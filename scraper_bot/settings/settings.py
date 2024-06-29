@@ -10,6 +10,7 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
+from ..utilities.disk_cache_dsn import DiskCacheDsn
 from .browser import BrowserSettings
 from .notifications import NotificationsSettings
 from .task import TaskSettings
@@ -17,22 +18,19 @@ from .task import TaskSettings
 DEFAULT_SETTINGS_PATH = [
     Path.cwd() / "config.yml",
     Path.cwd() / "config.yaml",
-    "/etc/scraper_bot/config.yml",
-    "/etc/scraper_bot/config.yaml",
+    "/etc/scraper-bot/config.yml",
+    "/etc/scraper-bot/config.yaml",
 ]
 
 
 class Settings(BaseSettings):
-    daemonize: Annotated[
-        bool, Field(description="make the scraper run as a daemon instead run only once", default=False)
-    ]
     interval: Annotated[
-        timedelta,
+        timedelta | None,
         Field(
-            gt=0,
-            description="How often the tasks should be done expressed in seconds. "
-            "It will be ignored if `daemonize` is False",
-            default=60 * 60,
+            gt=1,
+            description="How often the tasks should be done, expressed in seconds. "
+            "If the value provided is 0 the task will run only once.",
+            default=None,
         ),
     ]
 
@@ -42,7 +40,9 @@ class Settings(BaseSettings):
         list[TaskSettings], Field(min_length=1, description="The scraper tasks the bot will have to perform")
     ]
     notifications: Annotated[NotificationsSettings, Field(description="Notifications configuration")]
-    redis: Annotated[RedisDsn, Field(description="An URI to a redis instance used to cache")]
+    cache: Annotated[
+        RedisDsn | DiskCacheDsn, Field(description="A DSN to a redis instance or diskcache folder used to cache")
+    ]
 
     model_config = SettingsConfigDict(
         extra="ignore",
