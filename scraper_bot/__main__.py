@@ -28,14 +28,6 @@ def main() -> int:
     )
 
     parser.add_argument(
-        "-d",
-        "--daemonize",
-        action="store_true",
-        dest="daemonize",
-        help="run the scraper as a daemon instead run only once",
-    )
-
-    parser.add_argument(
         "--config-schema",
         action="store_true",
         dest="show_config_schema",
@@ -66,9 +58,6 @@ def main() -> int:
         Settings.set_settings_path(config_path)
         logger.info(f"Using config file '{config_path}'")
 
-    if args.get("daemonize"):
-        cli_override_settings["daemonize"] = True
-
     try:
         settings = Settings(**cli_override_settings)
     except ValidationError as e:
@@ -91,7 +80,7 @@ def main() -> int:
     loop = new_event_loop()
     loop.add_signal_handler(SIGINT, lambda: asyncio.create_task(clean_loop(loop)))
 
-    if not settings.daemonize:
+    if not settings.interval:
         task = loop.create_task(bot.run_once())
     else:
         task = loop.create_task(bot.run())

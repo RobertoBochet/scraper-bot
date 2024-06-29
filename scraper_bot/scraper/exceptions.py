@@ -1,4 +1,7 @@
-class ScraperTaskError(Exception):
+from scraper_bot.exceptions import ScraperBotError
+
+
+class ScraperTaskError(ScraperBotError):
     pass
 
 

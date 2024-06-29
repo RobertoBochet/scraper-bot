@@ -1,0 +1,2 @@
+class ScraperBotError(Exception):
+    pass

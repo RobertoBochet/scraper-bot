@@ -5,7 +5,7 @@ from uuid import uuid4
 from aiolimiter import AsyncLimiter
 from apprise import NOTIFY_FORMATS, NotifyFormat
 from jinja2 import BaseLoader, Environment, Template
-from pydantic import BaseModel, Field, PositiveFloat, PrivateAttr, model_validator
+from pydantic import BaseModel, Field, PrivateAttr, model_validator
 
 from scraper_bot.utilities.apprise_uri import SecretAppriseUri
 
@@ -17,7 +17,7 @@ class NotificationChannel(BaseModel):
     message: Annotated[str | None, Field(description="The message of the notification", default=None)]
     format: Annotated[Format | None, Field(description="The format of the notification message", default=None)]
     uri: Annotated[SecretAppriseUri, Field(description="The URI of the notification")]
-    rateLimit: Annotated[PositiveFloat | None, Field(description="Rate limit in messages per second", default=None)]
+    rateLimit: Annotated[float | None, Field(description="Rate limit in messages per second", default=None, ge=1)]
 
     _tag: Annotated[str, PrivateAttr(default_factory=lambda: uuid4().hex)]
 
@@ -46,7 +46,7 @@ class NotificationsSettings(BaseModel):
         list[SecretAppriseUri | NotificationChannel],
         Field(description="Notification channel or apprise compatible URI", min_length=1),
     ]
-    rateLimit: Annotated[PositiveFloat, Field(description="Rate limit in messages per second", default=30)]
+    rateLimit: Annotated[float, Field(description="Rate limit in messages per second", default=10, ge=1)]
 
     @model_validator(mode="after")
     def parse_channels(self) -> Self:
