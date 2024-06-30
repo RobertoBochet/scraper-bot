@@ -17,7 +17,7 @@ class NotificationChannel(BaseModel):
     message: Annotated[str | None, Field(description="The message of the notification", default=None)]
     format: Annotated[Format | None, Field(description="The format of the notification message", default=None)]
     uri: Annotated[SecretAppriseUri, Field(description="The URI of the notification")]
-    rateLimit: Annotated[float | None, Field(description="Rate limit in messages per second", default=None, ge=1)]
+    rateLimit: Annotated[float | None, Field(description="Rate limit in messages per minute", default=None, ge=1)]
 
     _tag: Annotated[str, PrivateAttr(default_factory=lambda: uuid4().hex)]
 
@@ -33,7 +33,7 @@ class NotificationChannel(BaseModel):
 
     @cached_property
     def rate_limiter(self) -> AsyncLimiter:
-        return AsyncLimiter(self.rateLimit, time_period=1)
+        return AsyncLimiter(self.rateLimit, time_period=60)
 
 
 class NotificationsSettings(BaseModel):
@@ -46,7 +46,7 @@ class NotificationsSettings(BaseModel):
         list[SecretAppriseUri | NotificationChannel],
         Field(description="Notification channel or apprise compatible URI", min_length=1),
     ]
-    rateLimit: Annotated[float, Field(description="Rate limit in messages per second", default=10, ge=1)]
+    rateLimit: Annotated[float, Field(description="Rate limit in messages per minute", default=60, ge=1)]
 
     @model_validator(mode="after")
     def parse_channels(self) -> Self:
