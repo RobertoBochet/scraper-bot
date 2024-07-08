@@ -1,19 +1,31 @@
 from datetime import timedelta
-from typing import Annotated
+from logging import getLogger
+from typing import Annotated, Any
 
-from pydantic import BaseModel, Field, HttpUrl, PositiveInt
+from pydantic import BaseModel, Field, HttpUrl, PositiveInt, model_validator
 
 
 class TaskSettings(BaseModel):
     name: Annotated[str, Field(description="A human readable label for teh task")]
     url: Annotated[HttpUrl, Field(description="The url to the page to be scraped")]
 
-    target: Annotated[
+    script: Annotated[
         str,
         Field(
             description="Javascript script to retrieve the target entities. "
             "The script have to return a object(dict) or a list of them. "
             "The attributes of the object will be accessible in the notification message template"
+        ),
+    ]
+    target: Annotated[
+        str | None,
+        Field(
+            deprecated=True,
+            description="'target' is deprecated, use 'script' instead. "
+            "Javascript script to retrieve the target entities. "
+            "The script have to return a object(dict) or a list of them. "
+            "The attributes of the object will be accessible in the notification message template",
+            default=None,
         ),
     ]
     waitingForTarget: Annotated[
@@ -34,3 +46,13 @@ class TaskSettings(BaseModel):
     maxPages: Annotated[
         PositiveInt | None, Field(description="The maximum number of pages to scrape per task", default=None)
     ]
+
+    @model_validator(mode="before")
+    @classmethod
+    def retro_compatibility(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if (target := values.get("target")) is not None:
+            getLogger(__package__).warning("'target' is deprecated, use 'script' instead")
+            if values.get("script") is None:
+                values["script"] = target
+
+        return values

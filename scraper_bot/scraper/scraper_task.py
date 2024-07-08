@@ -6,7 +6,7 @@ from playwright_stealth import stealth_async
 from scraper_bot.settings.task import TaskSettings
 
 from .browser_manager import BrowserManager
-from .exceptions import TargetScriptError
+from .exceptions import InvalidJSONError, TargetScriptError
 from .scraper_task_result import ScraperTaskResult
 
 
@@ -36,19 +36,32 @@ class ScraperTask:
             if self._browser_manager.stealth_enabled:
                 await stealth_async(page)
 
-            await page.goto(str(self.settings.url))
+            response = await page.goto(str(self.settings.url))
+
+            match await response.header_value("Content-Type"):
+                case "application/json":
+                    self._logger.info("Got JSON response")
+                    try:
+                        content = await response.json()
+                    except Error as e:
+                        self._logger.error("Invalid JSON error")
+                        self._logger.debug(e)
+                        raise InvalidJSONError()
+                case _:
+                    content = await response.text()
 
             # TODO add support for waitingForTarget
 
             self._logger.info("Starting target script evaluated")
             try:
-                data: str | list[str] | dict | list[dict] = await page.evaluate(self.settings.target)
+                data: str | list[str] | dict | list[dict] = await page.evaluate(self.settings.script, content)
             except Error as e:
                 self._logger.error("Target script error")
                 self._logger.debug(e)
                 raise TargetScriptError()
 
             self._logger.info("Target script evaluated")
+
             self._logger.debug(data)
 
             # TODO add support for nextPageTarget
