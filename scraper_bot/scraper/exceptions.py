@@ -11,3 +11,7 @@ class TargetScriptError(ScraperTaskError):
 
 class NoBrowserAvailable(ScraperTaskError):
     pass
+
+
+class InvalidJSONError(ScraperTaskError):
+    pass
