@@ -41,7 +41,8 @@ class Settings(BaseSettings):
     ]
     notifications: Annotated[NotificationsSettings, Field(description="Notifications configuration")]
     cache: Annotated[
-        RedisDsn | DiskCacheDsn, Field(description="A DSN to a redis instance or diskcache folder used to cache")
+        RedisDsn | DiskCacheDsn | None,
+        Field(description="A DSN to a redis instance or diskcache folder used to cache", default=None),
     ]
 
     model_config = SettingsConfigDict(
