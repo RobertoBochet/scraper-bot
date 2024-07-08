@@ -31,7 +31,7 @@ class DiskCache(CacheInterface):
         return entry in self._disk_cache
 
     async def add(self, entry: str) -> None:
-        self._disk_cache.add(entry, "@", expire=60 * 24 * 30 * 3)
+        self._disk_cache.add(entry, "@")
 
     async def filter_exists(self, *entries: T, to_fingerprint: Callable[[T], str]) -> list[T]:
         return [e for e in entries if to_fingerprint(e) not in self._disk_cache]
