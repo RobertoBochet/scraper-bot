@@ -38,6 +38,8 @@ class ScraperTask:
 
             response = await page.goto(str(self.settings.url))
 
+            content = None
+
             match await response.header_value("Content-Type"):
                 case "application/json":
                     self._logger.info("Got JSON response")
@@ -47,8 +49,6 @@ class ScraperTask:
                         self._logger.error("Invalid JSON error")
                         self._logger.debug(e)
                         raise InvalidJSONError()
-                case _:
-                    content = await response.text()
 
             # TODO add support for waitingForTarget
 
