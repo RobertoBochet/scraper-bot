@@ -83,4 +83,3 @@ repos:
     hooks:
       - id: python-safety-dependencies-check
         args: [ "-i", "74429" ]
-        additional_dependencies: [ "poetry-plugin-export>=1.8" ]
