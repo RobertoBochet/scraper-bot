@@ -75,7 +75,7 @@ jobs:
         run: |
           poetry build
       - name: pypi-publish
-        uses: pypa/gh-action-pypi-publish@v1.9.0
+        uses: pypa/gh-action-pypi-publish@v1.13.0
       - uses: actions/upload-artifact@v4
         with:
           name: python-packages
